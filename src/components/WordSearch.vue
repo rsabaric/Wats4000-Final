@@ -1,5 +1,13 @@
 <template>
+
   <div>
+    <div>
+      <p>
+      <router-link v-bind:to="{ name: 'WordSearch' }">Word Search</router-link>
+      &bull;
+      <router-link v-bind:to="{ name: 'Dogs' }">Dog Photo Finder</router-link>
+    </p>
+   </div>
     <div class="messages">
       <message-container v-bind:messages="messages"></message-container>
     </div>
