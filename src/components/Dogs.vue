@@ -20,33 +20,50 @@
     </ul>
     <ul v-if="results" class="photobox">
       <p v-if="dogUrls">keep clicking for more random {{dogSelection}} photos</p>
-      <img v-bind:src="dogPic" class="dogImg" v-on:click="getDog">
+      <transition-group name="fade" tag="div" appear>
+      <img v-bind:src="dogPic" class="dogImg" v-on:click="getDog" v-bind:key="dogPic">
+      </transition-group>
         <ul class = "likebar">
           <input v-on:keyup.enter="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''" type="text" v-model="dogComment" placeholder="Add Optional Comment Here"></input>
-          <button v-on:click="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''"> Like Dog </button>
+          <button v-on:click="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''"> Like Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
-    <div class = "liked">
-      <p v-if="likelist.length>0">My Favorite Dogs:</p>
+    <div v-if="likelist.length>0" class = "liked">
+      <p style="text-align:center;">My Favorite Dogs:</p>
       <transition-group name="slideRight" tag="div" appear>
       <ul v-for="item in likelist" class="likeHistory" v-bind:key="likelist.indexOf(item)">
         <li class="likeHistoryelement">
           <a v-bind:href="item.link" target="_blank"> <img v-bind:src="item.link" class="thumbnail">{{item.dog}} </a>
-          <span v-if="item.comment">"{{item.comment}}"</span><button v-on:click="removeWord(item)" class="remove-word">[remove dog]</button>
+          <span v-if="item.comment">"{{item.comment}}"</span><button v-on:click="removeWord(item)" class="remove-word">[remove dog] </button>
         </li>
       </ul>
         </transition-group>
     </div>
+      <div v-if="likelist.length>0">
+        <p><button v-on:click="showSpin = !showSpin">Show Another Bone Spinner</button></p>
+        <div v-if="showSpin">
+        <bonespin v-if="likelist.length>0" class = "bonespin"></bonespin>
+        <p class="badbonespinners">These are pretty cool, but could use a bit more work!</p>
+        <bonerotate v-if="likelist.length>0" class = "bonespin"></bonerotate>
+        </div>
+       </div>
   </div>
 </template>
 
 <script>
 
 import axios from 'axios';
+import CubeSpinner from '@/components/CubeSpinner';
+import BoneSpinner from '@/components/DogBoneSpin';
+import BoneRotater from '@/components/DogBoneRotate';
 require('vue2-animate/dist/vue2-animate.min.css');
 
 export default {
   name: 'Dogs',
+  components: {
+  bonerotate: BoneRotater,
+  bonespin: BoneSpinner
+  },
   data () {
     return {
       results: null,
@@ -59,7 +76,8 @@ export default {
       dogPic:'',
       photoIndex: 0,
       likelist:[],
-      dogComment:''
+      dogComment:'',
+      showSpin:false
     }
   },
 methods: {
@@ -159,19 +177,21 @@ a {
   color: #42b983;
 }
 .photobox{
-  height: 600px;
-  width: 500px;
+  height: auto;
+  max-width:80%;
   border: 1px solid black;
+  margin: 12px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+  padding-right: 15px;
 }
 .dogImg {
-    max-width: 400px;
-    max-height: 400px;
-    height: auto;
+    max-width: 75%;
     cursor: pointer;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
+    display: inline-block;
+    padding: 1rem;
+    height: auto;
 }
 .likeHistory {
   display: block;
@@ -180,15 +200,20 @@ a {
   display: inline-block;
 }
 .liked {
+  height: auto;
+  max-width: 80%;
   border: 1px solid black;
-  margin: 100px;
-  width: 500px;
+  margin: 10px;
+  display:table;
+  padding:10px;
 }
 .likebar {
   padding: 10px;
-}
-.photobox{
-  margin: 100px;
+  position: absolute;
+  bottom: 15px;
+  display: contents;
+  max-width: 75%;
+  padding: 15px;
 }
 button{
   background: #333;
@@ -225,4 +250,12 @@ button.remove-word:hover {
     padding: 5px;
     width: 50px;
 }
+.bonespin{
+  margin: 150px;
+}
+.badbonespinners{
+  padding: 20px;
+  margin: 20px;
+}
+
 </style>
