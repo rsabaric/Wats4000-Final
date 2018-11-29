@@ -2,7 +2,7 @@
   "name": "visual-enhancement",
   "version": "1.0.0",
   "description": "Enhancing an exising project with visual improvements.",
-  "author": "Shawn Rider <shawn@shawnrider.com>",
+  "author": "Rosie Sabaric",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "vue": "^2.5.2",
+    "vue-google-charts": "^0.3.2",
+    "vue-ls": "^3.2.0",
     "vue-router": "^3.0.1",
     "vue2-animate": "^2.1.0"
   },

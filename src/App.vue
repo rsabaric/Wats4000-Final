@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Word Search Toolset</h1>
+    <h1>The Woofing Wanderer</h1>
     <router-view/>
   </div>
 </template>
@@ -17,7 +17,11 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 60px;
-  padding: 1rem 2rem;
+  margin-top: 20px;
+  padding: 0rem 0rem;
+    background-image: url(assets/watersky.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+  
 }
 </style>

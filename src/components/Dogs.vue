@@ -1,17 +1,24 @@
 <template>
   <div class="rhyme-mine">
    <p>
-    <router-link v-bind:to="{ name: 'WordSearch' }">Word Search</router-link>
-    &bull;
-    <router-link v-bind:to="{ name: 'Dogs' }">Dog Photo Finder</router-link>
+    <router-link v-bind:to="{ name: 'Dogs' }">Step 1: Pick a Canine Companion</router-link>
    </p>
-        <label for="petChooser">Pick a dog breed:</label>
+   <p>
+    <router-link v-bind:to="{ name: 'CitySearch' }">Step 2: Your Info</router-link>
+   </p>
+   <p>
+    <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
+   </p>
+   <h2>Thanks for visiting the Woofing Wanderer!</h2>
+   <h3>We provide travel guidance for you and your pup, so you and your canine companion can have an adventure to remember together.</h3>
+   <h4>Please select your canine companion from the following list.  Your companion will guide you through this application.</h4>
+        <label for="petChooser">Pick a dog breed for your companion:</label>
     <select v-model="dogSelection" v-on:change="results=null">
       <option disabled value="">Please select one</option>
       <option v-for="(value, key) in posts.message" v-bind:value="key">{{ key }}</option>
     </select>
     <form v-if="dogSelection" v-on:submit.prevent="getDog">
-      <p><button type="submit">Get a random {{dogSelection }} photo</button></p>
+      <p><button type="submit">Browse the {{dogSelection }}s</button></p>
     </form>
     <ul v-if="errors.length>0" class="errors">
       <li v-for="error in errors">
@@ -19,13 +26,14 @@
       </li>
     </ul>
     <ul v-if="results" class="photobox">
-      <p v-if="dogUrls">keep clicking for more random {{dogSelection}} photos</p>
+      <p v-if="dogUrls">keep clicking for more {{dogSelection}} photos</p>
       <transition-group name="fade" tag="div" appear>
       <img v-bind:src="dogPic" class="dogImg" v-on:click="getDog" v-bind:key="dogPic">
       </transition-group>
         <ul class = "likebar">
           <input v-on:keyup.enter="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''" type="text" v-model="dogComment" placeholder="Add Optional Comment Here"></input>
           <button v-on:click="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''"> Like Dog <i class="fas fa-bone fa-spin"></i></button>
+          <button v-on:click="selectDog">Select Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
     <div v-if="likelist.length>0" class = "liked">
@@ -39,14 +47,17 @@
       </ul>
         </transition-group>
     </div>
-      <div v-if="likelist.length>0">
-        <p><button v-on:click="showSpin = !showSpin">Show Another Bone Spinner</button></p>
-        <div v-if="showSpin">
-        <bonespin v-if="likelist.length>0" class = "bonespin"></bonespin>
-        <p class="badbonespinners">These are pretty cool, but could use a bit more work!</p>
-        <bonerotate v-if="likelist.length>0" class = "bonespin"></bonerotate>
-        </div>
-       </div>
+    <div v-if="companion.length>0" class = "liked">
+      <p style="text-align:center;">My Canine Companion:</p>
+      <transition-group name="slideRight" tag="div" appear>
+      <ul v-for="item in companion" class="likeHistory" v-bind:key="companion.indexOf(item)">
+        <li class="likeHistoryelement">
+          <a v-bind:href="item.link" target="_blank"> <img v-bind:src="item.link" class="thumbnail">{{item.dog}} </a>
+          <span v-if="item.comment">"{{item.comment}}"</span>
+        </li>
+      </ul>
+        </transition-group>
+    </div>
   </div>
 </template>
 
@@ -77,8 +88,12 @@ export default {
       photoIndex: 0,
       likelist:[],
       dogComment:'',
-      showSpin:false
+      showSpin:false,
+      companion:[]
     }
+  },
+  created () {
+      this.companion = this.$ls.get('selectedDog');
   },
 methods: {
 
@@ -89,6 +104,7 @@ methods: {
       this.dogUrls = response.data.message;
       this.photoIndex = Math.floor(Math.random()*this.dogUrls.length);
       this.dogPic = this.dogUrls[this.photoIndex];
+
 
     })
     .catch(error => {
@@ -102,6 +118,12 @@ methods: {
         type: 'success',
         text: `${word} removed from the word list.`
       };
+
+  },
+    selectDog: function () {
+    this.companion=([{dog: this.dogSelection,link:this.dogPic, comment:this.dogComment}]); 
+    this.$ls.set('selectedDog', this.companion);
+    this.dogComment='';
 
   }
 },
