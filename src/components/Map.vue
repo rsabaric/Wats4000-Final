@@ -9,6 +9,14 @@
    <p>
     <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
    </p>
+   <!--
+   <p>
+    <router-link v-bind:to="{ name: 'End' }">Step 4: Finished!</router-link>
+   </p>
+   -->
+     <img v-bind:src="companion[0].link" class="thumbnail"></img>
+     <p> Select a destination from one of the markers on the map below.</p>
+     <p> The map shows the current weather and historical weather information.  Use the buttons below the map to change the view.</p>
     <div id="app">
     <GChart
       type="GeoChart"
@@ -18,17 +26,19 @@
       :events="chartEvents"
       ref="gChart"
     />
-    <button v-on:click="refresh">Refresh Current Temperatures</button>
+    <button v-on:click="refresh">Get Current Temperatures</button>
+    <label>
+    <button v-on:click="seeHistory">See Historical Weather for Selected Date:</button>
     <input type="date" v-model="historyDate">
-    <button v-on:click="seeHistory">See Average Weather</button>
-    <img v-bind:src="companion[0].link" class="thumbnail"></img>
+    </label>
     <div v-if="selectionTemp">
     <p>Your Current Selection: {{selectionCity}}</p>
     <p v-if="selectionTemp<40">Brrrr, it's only It's {{selectionTemp}} degrees in {{selectionCity}}, you better pack that parka!</p>
     <p v-else-if="selectionTemp<60">It's {{selectionTemp}} degrees in {{selectionCity}}, you might want to pack a sweater!</p>
     <p v-else-if="selectionTemp<80">It's {{selectionTemp}} degrees in {{selectionCity}}, that sounds nice! Pack for pleasant weather.</p>
     <p v-else-if="selectionTemp<100">It's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and flip-flops!</p>
-    <p v-else>Yikes, it's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and drink plenty of water!</p>  
+    <p v-else>Yikes, it's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and drink plenty of water!</p> 
+    <button v-on:click="final">Alright, take me to {{selectionCity}}</button>
     </div>
   </div>
   
@@ -86,6 +96,9 @@ export default {
     }
   },
   methods: {
+      final: function () {
+      this.$router.push('End');
+      },
       refresh: function () {
         //Trying to loop through mapData w/ current temps from results.  Not working, maybe i off by 1 or wrong number type for GeoChart?
         //let i = 0;

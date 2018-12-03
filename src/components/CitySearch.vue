@@ -6,11 +6,12 @@
    <p>
     <router-link v-bind:to="{ name: 'CitySearch' }">Step 2: Your Info</router-link>
    </p>
+   <!--
    <p>
     <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
    </p>
+   -->
     <img v-bind:src="companion[0].link" class="thumbnail">Woof Woof!  I'll be your travelling companion!</img>
-    <favorite-cities v-bind:favoriteCities="favorites" v-bind:homeCity="home" v-on:added-Home="newHome"></favorite-cities>
       <div class="home">
     <div v-show="showForm" class="form-container">
       <h1>Enter your information</h1>
@@ -30,40 +31,45 @@
           <input type="radio" id="$10000" value="10000"  v-model="budget">
           <label for="$10000">$1001-$10000</label>
         </label></p>
-        <p><label>When do you want to travel?:
+        <p><label>When do you want to travel?
           <input type="date" v-model="traveldate">
         </label></p>
+        <message-container v-bind:messages="messages"></message-container>
+    <form v-on:submit.prevent="getCities">
+        <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button></p>
+    </form>
+    <p v-if="results && results.list.length>1">There is more than one {{query}} on file, please select a location from the map below:</p>
+    <p v-if="results && results.list.length>0"> you have selected city #{{selectedCityIndex+1}}</p>
+    <GmapMap v-if="results && results.list.length > 0"
+  :center="{lat:40, lng:-100}"
+  :zoom="3"
+  map-type-id="terrain"
+  style="width: 500px; height: 300px"
+>
+  <GmapMarker v-for="(marker, index) in results.list"
+    :key="index"
+    :position="{lat: marker.coord.lat, lng:marker.coord.lon}"
+    :clickable="true"
+    :draggable="true"
+    :label="(index+1).toString()"
+    @click="clicked({lat: marker.coord.lat, lng:marker.coord.lon}, index)"
+  />
+</GmapMap>
+    <ul class="cities" v-if="results && selectedCity && results.list.length  > 0">
+      <li>
+        <h2>{{ selectedCity.name }}, {{ selectedCity.sys.country }}</h2>
+        <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
+        <weather-data v-bind:weatherData="selectedCity.main"></weather-data>
+        <p><button class="save" v-on:click="addHome(city); saveCity(city)">Set City as Home</button></p>
+      </li>
+    </ul>
+    <load-spinner v-if="showLoading"></load-spinner>
         <p class="privacy"><label>I am ready to see my destinations!
         </label><button class="button"><input type="submit" value="Let's Go"></button></p>
       </form>
     </div>
   </div>
-    
-    <ul class="cities" v-if="home">
-      <li class="home">
-        <h2>Home:</h2>
-        <h2>{{ home.name }}, {{ home.sys.country }}</h2>
-        <p><router-link v-bind:to="{ name: 'CurrentWeather', params: { cityId: home.id } }">View Current Weather</router-link></p>
-      </li>
-    </ul>
-    <h2>City Search</h2>
-    <message-container v-bind:messages="messages"></message-container>
-    <form v-on:submit.prevent="getCities">
-        <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button></p>
-    </form>
-    <load-spinner v-if="showLoading"></load-spinner>
-    <ul class="cities" v-if="results && results.list.length > 0">
-      <li v-for="city in results.list">
-        <h2>{{ city.name }}, {{ city.sys.country }}</h2>
-        <p><router-link v-bind:to="{ name: 'CurrentWeather', params: { cityId: city.id } }">View Current Weather</router-link></p>
 
-        <weather-summary v-bind:weatherData="city.weather"></weather-summary>
-
-        <weather-data v-bind:weatherData="city.main"></weather-data>
-        <p><button class="save" v-on:click="saveCity(city)">Save City to Favorites</button></p>
-        <p><button class="save" v-on:click="addHome(city); saveCity(city)">Set City as Home</button></p>
-      </li>
-    </ul>
 
   </div>
 </template>
@@ -101,7 +107,10 @@ export default {
       checked: false,
       companion:[],
       budget:0,
-      traveldate:0
+      traveldate:0,
+      coordinates: null,
+      selectedCityIndex:0,
+      selectedCity: null
     }
   },
   created () {
@@ -112,6 +121,7 @@ export default {
     if (this.$ls.get('selectedDog')) {
       this.companion = this.$ls.get('selectedDog');
     }
+
   },
   methods: {
     saveCity: function (city) {
@@ -159,16 +169,24 @@ export default {
          this.showLoading = false;       
 
       }
+        this.coordinates={lat: this.results.list[0].coord.lat, lng:this.results.list[0].coord.lon};
+        console.log(coordinates);
     },
     validateForm: function () {
-      if((this.username !='') && (this.email !='') && (this.checked==="yes") && (this.traveldate!=0)){
-        console.log('form is valid');
-        this.showForm = false;;
-        console.log(this.username);
-      } else {
-        console.log('form is not valid');
-        this.showError = true;
-      }
+      this.$router.push('Map')
+      //if((this.username !='') && (this.email !='') && (this.checked==="yes") && (this.traveldate!=0)){
+        //console.log('form is valid');
+        //this.showForm = false;;
+        //console.log(this.username);
+      //} else {
+        //console.log('form is not valid');
+        //this.showError = true;
+      //}
+    },
+    clicked: function (locate, cityiden) {
+      this.selectedCityIndex=cityiden;
+      this.selectedCity = this.results.list[cityiden];
+      console.log(this.selectedCity);
     }
   }
 }
@@ -191,7 +209,7 @@ ul {
 li {
   display: inline-block;
   width: 500px;
-  min-height: 500px;
+  min-height: 100px;
   border: solid 1px #e8e8e8;
   padding: 10px;
   margin: 5px;

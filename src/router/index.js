@@ -4,6 +4,7 @@ import WordSearch from '@/components/WordSearch'
 import Dogs from '@/components/Dogs'
 import CitySearch from '@/components/CitySearch'
 import Map from '@/components/Map'
+import End from '@/components/End'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/map',
       name: 'Map',
       component: Map
+    },
+    {
+      path: '/end',
+      name: 'End',
+      component: End
     }
   ]
 })

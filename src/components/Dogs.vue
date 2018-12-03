@@ -3,12 +3,14 @@
    <p>
     <router-link v-bind:to="{ name: 'Dogs' }">Step 1: Pick a Canine Companion</router-link>
    </p>
+   <!--
    <p>
     <router-link v-bind:to="{ name: 'CitySearch' }">Step 2: Your Info</router-link>
    </p>
    <p>
     <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
    </p>
+  -->
    <h2>Thanks for visiting the Woofing Wanderer!</h2>
    <h3>We provide travel guidance for you and your pup, so you and your canine companion can have an adventure to remember together.</h3>
    <h4>Please select your canine companion from the following list.  Your companion will guide you through this application.</h4>
@@ -30,9 +32,7 @@
       <transition-group name="fade" tag="div" appear>
       <img v-bind:src="dogPic" class="dogImg" v-on:click="getDog" v-bind:key="dogPic">
       </transition-group>
-        <ul class = "likebar">
-          <input v-on:keyup.enter="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''" type="text" v-model="dogComment" placeholder="Add Optional Comment Here"></input>
-          <button v-on:click="likelist.push({dog: dogSelection,link:dogPic, comment:dogComment}), dogComment=''"> Like Dog <i class="fas fa-bone fa-spin"></i></button>
+        <ul class = "likebar">          
           <button v-on:click="selectDog">Select Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
@@ -124,6 +124,7 @@ methods: {
     this.companion=([{dog: this.dogSelection,link:this.dogPic, comment:this.dogComment}]); 
     this.$ls.set('selectedDog', this.companion);
     this.dogComment='';
+    this.$router.push('CitySearch');
 
   }
 },
