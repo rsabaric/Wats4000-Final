@@ -1,16 +1,19 @@
 <template>
   <div>
-   <p>
-    <router-link v-bind:to="{ name: 'Dogs' }">Step 1: Pick a Canine Companion</router-link>
-   </p>
-   <p>
-    <router-link v-bind:to="{ name: 'CitySearch' }">Step 2: Your Info</router-link>
-   </p>
-   <!--
-   <p>
-    <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
-   </p>
-   -->
+   <ul class="nav">
+   <li>
+    <router-link to=/ active class="navitem" exact>Step 1: Pick a Canine Companion</router-link>
+   </li>
+   <li>
+    <router-link to=/CitySearch active class="navitem" exact>Step 2: Your Info</router-link>
+   </li>
+   <li class = "navItemInactive">
+    Step 3: Your Results
+   </li>
+   <li class = "navItemInactive">
+    Step 4: Finished!
+   </li>
+   </ul>
     <img v-bind:src="companion[0].link" class="thumbnail">Woof Woof!  I'll be your travelling companion!</img>
       <div class="home">
     <div v-show="showForm" class="form-container">
@@ -39,7 +42,7 @@
         <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button></p>
     </form>
     <p v-if="results && results.list.length>1">There is more than one {{query}} on file, please select a location from the map below:</p>
-    <p v-if="results && results.list.length>0"> you have selected city #{{selectedCityIndex+1}}</p>
+    <p v-if="results && results.list.length>1 && selectedCity"> you have selected city #{{selectedCityIndex+1}}</p>
     <GmapMap v-if="results && results.list.length > 0"
   :center="{lat:40, lng:-100}"
   :zoom="3"
@@ -60,12 +63,11 @@
         <h2>{{ selectedCity.name }}, {{ selectedCity.sys.country }}</h2>
         <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
         <weather-data v-bind:weatherData="selectedCity.main"></weather-data>
-        <p><button class="save" v-on:click="addHome(city); saveCity(city)">Set City as Home</button></p>
       </li>
     </ul>
     <load-spinner v-if="showLoading"></load-spinner>
-        <p class="privacy"><label>I am ready to see my destinations!
-        </label><button class="button"><input type="submit" value="Let's Go"></button></p>
+        <p class="privacy"><label>I am ready to see myff destinations!
+        </label><input type="submit" value="Let's Go"></p>
       </form>
     </div>
   </div>
@@ -170,7 +172,12 @@ export default {
 
       }
         this.coordinates={lat: this.results.list[0].coord.lat, lng:this.results.list[0].coord.lon};
-        console.log(coordinates);
+        if(this.results.list.length=1) {
+          this.selectedCity=this.results.list[0];
+        } else {
+          this.selectedCity=null;
+        }
+ console.log(coordinates);
     },
     validateForm: function () {
       this.$router.push('Map')
@@ -201,19 +208,6 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  width: 500px;
-  min-height: 100px;
-  border: solid 1px #e8e8e8;
-  padding: 10px;
-  margin: 5px;
-}
 a {
   color: #42b983;
 }
@@ -241,7 +235,38 @@ a {
     padding: 5px;
     width: 150px;
 }
-
+.nav {
+  background-color:grey;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow: hidden;
+}
+li {
+  display:inline;
+  padding: 10px;
+}
+.router-link-exact-active {
+  background-color: #00cc99;
+}
+.navitem {
+  font-family:Helvetica, sans-serif;
+  text-decoration: none;
+  padding: 14px 16px;
+  display: block;
+  color: white;
+  text-align: center;
+  float: left;     
+}
+.navItemInactive {
+  font-family:Helvetica, sans-serif;
+  text-decoration: none;
+  padding: 14px 16px;
+  display: block;
+  color: rgba(48, 48, 48, 0.986);
+  text-align: center;
+  float: left;     
+}
 </style>
 
 

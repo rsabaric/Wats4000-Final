@@ -1,24 +1,24 @@
 <template>
   <div>
-   <p>
-    <router-link v-bind:to="{ name: 'Dogs' }">Step 1: Pick a Canine Companion</router-link>
-   </p>
-   <p>
-    <router-link v-bind:to="{ name: 'CitySearch' }">Step 2: Your Info</router-link>
-   </p>
-   <p>
-    <router-link v-bind:to="{ name: 'Map' }">Step 3: Your Results</router-link>
-   </p>
-   <!--
-   <p>
-    <router-link v-bind:to="{ name: 'End' }">Step 4: Finished!</router-link>
-   </p>
-   -->
+   <ul class="nav">
+   <li>
+    <router-link to=/ active class="navitem" exact>Step 1: Pick a Canine Companion</router-link>
+   </li>
+   <li>
+    <router-link to=/CitySearch active class="navitem" exact>Step 2: Your Info</router-link>
+   </li>
+   <li>
+    <router-link to=/Map active class="navitem" exact>Step 3: Your Results</router-link>
+   </li>
+   <li class = "navItemInactive">
+    Step 4: Finished!
+   </li>
+   </ul>
      <img v-bind:src="companion[0].link" class="thumbnail"></img>
      <p> Select a destination from one of the markers on the map below.</p>
      <p> The map shows the current weather and historical weather information.  Use the buttons below the map to change the view.</p>
     <div id="app">
-    <GChart
+    <GChart class = "googlechart"
       type="GeoChart"
       :settings="{ packages: ['geochart'], mapsApiKey:'AIzaSyA63PM8wLyUAsL6AT3MVuxUszbVQ_KBJUE'}"
       :data="mapData"
@@ -207,5 +207,40 @@ created () {
     border-radius: 4px;
     padding: 5px;
     width: 150px;
+}
+.nav {
+  background-color:grey;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  overflow: hidden;
+}
+li {
+  display:inline;
+  padding: 10px;
+}
+.router-link-exact-active {
+  background-color: #00cc99;
+}
+.navitem {
+  font-family:Helvetica, sans-serif;
+  text-decoration: none;
+  padding: 14px 16px;
+  display: block;
+  color: white;
+  text-align: center;
+  float: left;     
+}
+.navItemInactive {
+  font-family:Helvetica, sans-serif;
+  text-decoration: none;
+  padding: 14px 16px;
+  display: block;
+  color: rgba(48, 48, 48, 0.986);
+  text-align: center;
+  float: left;     
+}
+.googlechart {
+  max-width: 50%;
 }
 </style>
