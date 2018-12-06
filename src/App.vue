@@ -19,7 +19,7 @@ export default {
   color: #2c3e50;
   margin-top: 20px;
   padding: 0rem 0rem;
-    background-image: url(assets/watersky.jpg);
+    /*background-image: url(assets/watersky.jpg);*/
     background-repeat: no-repeat;
     background-size: cover;
   

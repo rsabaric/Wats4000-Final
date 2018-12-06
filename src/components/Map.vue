@@ -15,9 +15,16 @@
    </li>
    </ul>
      <img v-bind:src="companion[0].link" class="thumbnail"></img>
-     <p> Select a destination from one of the markers on the map below.</p>
-     <p> The map shows the current weather and historical weather information.  Use the buttons below the map to change the view.</p>
+     <p>Woof Woof!  This page provides a map to help you choose a destination</p>
+     <p>We have the current weather for several popular cities, as well as historical averages for each month.</p>
+     <p>Use the button and slider below to change the info on the map, then choose a destination by clicking a city.</p>
     <div id="app">
+    <button v-on:click="refresh">Get Current Temperatures</button>
+    <!--<button v-on:click="seeHistory">See Historical Weather for:</button>
+    <input type="date" v-model="historyDate">-->
+    <label for="monthRange">Select Month for Historical Weather:</label>
+    <input type="range" v-on:click="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
+    <label for="monthRange">{{intMonth[historyMonth]}}</label>
     <GChart class = "googlechart"
       type="GeoChart"
       :settings="{ packages: ['geochart'], mapsApiKey:'AIzaSyA63PM8wLyUAsL6AT3MVuxUszbVQ_KBJUE'}"
@@ -26,18 +33,13 @@
       :events="chartEvents"
       ref="gChart"
     />
-    <button v-on:click="refresh">Get Current Temperatures</button>
-    <label>
-    <button v-on:click="seeHistory">See Historical Weather for Selected Date:</button>
-    <input type="date" v-model="historyDate">
-    </label>
     <div v-if="selectionTemp">
     <p>Your Current Selection: {{selectionCity}}</p>
     <p v-if="selectionTemp<40">Brrrr, it's only It's {{selectionTemp}} degrees in {{selectionCity}}, you better pack that parka!</p>
     <p v-else-if="selectionTemp<60">It's {{selectionTemp}} degrees in {{selectionCity}}, you might want to pack a sweater!</p>
     <p v-else-if="selectionTemp<80">It's {{selectionTemp}} degrees in {{selectionCity}}, that sounds nice! Pack for pleasant weather.</p>
     <p v-else-if="selectionTemp<100">It's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and flip-flops!</p>
-    <p v-else>Yikes, it's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and drink plenty of water!</p> 
+    <p v-else>Yikes, it's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and drink plenty of water!</p>
     <button v-on:click="final">Alright, take me to {{selectionCity}}</button>
     </div>
   </div>
@@ -71,7 +73,8 @@ export default {
   },
   data () {
     return {
-      testName: null,
+      historyMonth: 0,
+      intMonth: {0:'January', 1:'February', 2:'March', 3:'April', 4:'May', 5:'June', 6:'July', 7:'August', 8:'September', 9:'October', 10:'November', 11:'December'},
       historyDate: null,
       results: null,
       query: '5809844,5856195,3621849,3173529,3531673,3985710,2193733,5128581,5811696,1850147,3117735',
@@ -79,7 +82,9 @@ export default {
       messages: [],
       companion:[],
       woof:'dfdf',
-      mapData: [],
+      mapData:[
+        ['City',   'Max Temperature', 'Precipitation'],
+        ['Spokane, WA', 0,0]],
       selectionCity:'',
       selectionTemp:0,
       dogMessage: '',
@@ -131,8 +136,9 @@ export default {
           //console.log(this.mapData[i+1][i+1])
           //console.log(this.results.list[i].main.temp);
         //}
-        var travelDate = new Date(this.historyDate);
-        var month = travelDate.getMonth();
+        //var travelDate = new Date(this.historyDate);
+        //var month = travelDate.getMonth();
+        var month = this.historyMonth;
         this.mapData= [
         ['City',   'Max Temperature', 'Precipitation'],
         ['Seattle, WA',      Seattle[month]['Average High Temp.'],    Seattle[month]['Precipitation']],
@@ -242,5 +248,38 @@ li {
 }
 .googlechart {
   max-width: 50%;
+}
+.slider {
+    -webkit-appearance: none;
+    width: 75px;
+    height: 15px;
+    border-radius: 5px;
+    background: #ee785b;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
 }
 </style>
