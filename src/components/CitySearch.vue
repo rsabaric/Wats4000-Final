@@ -66,7 +66,7 @@
       </li>
     </ul>
     <load-spinner v-if="showLoading"></load-spinner>
-        <p class="privacy"><label>I am ready to see myff destinations!
+        <p class="privacy"><label>I am ready to see my destinations!
         </label><input type="submit" value="Let's Go"></p>
       </form>
     </div>
@@ -110,9 +110,9 @@ export default {
       companion:[],
       budget:0,
       traveldate:0,
-      coordinates: null,
+      coordinates: {},
       selectedCityIndex:0,
-      selectedCity: null
+      selectedCity: {}
     }
   },
   created () {
@@ -177,18 +177,17 @@ export default {
         } else {
           this.selectedCity=null;
         }
- console.log(coordinates);
     },
     validateForm: function () {
-      this.$router.push('Map')
-      //if((this.username !='') && (this.email !='') && (this.checked==="yes") && (this.traveldate!=0)){
-        //console.log('form is valid');
+      if((this.username !='') && (this.email !='') && (this.traveldate!=0) && (this.selectedCity)){
+        console.log('form is valid');
+        this.$router.push('Map')
         //this.showForm = false;;
         //console.log(this.username);
-      //} else {
-        //console.log('form is not valid');
-        //this.showError = true;
-      //}
+      } else {
+        console.log('form is not valid');
+        this.showError = true;
+      }
     },
     clicked: function (locate, cityiden) {
       this.selectedCityIndex=cityiden;

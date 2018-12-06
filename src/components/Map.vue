@@ -247,7 +247,11 @@ li {
   float: left;     
 }
 .googlechart {
-  max-width: 50%;
+  max-width: 75%;
+  margin:auto;
+  margin-top: 15px;
+  border:solid black;
+  border-width: 1px;
 }
 .slider {
     -webkit-appearance: none;
@@ -273,6 +277,8 @@ li {
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
+    border: solid black;
+    border-width: 1px
 }
 
 .slider::-moz-range-thumb {

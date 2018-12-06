@@ -20,7 +20,7 @@
         <label for="petChooser">Pick a dog breed for your companion:</label>
     <select v-model="dogSelection" v-on:change="results=null">
       <option disabled value="">Please select one</option>
-      <option v-for="(value, key) in posts.message" v-bind:value="key">{{ key }}</option>
+      <option v-for="(value, key, index) in posts.message" :key="index">{{ key }}</option>
     </select>
     <form v-if="dogSelection" v-on:submit.prevent="getDog">
       <p><button type="submit">Browse the {{dogSelection }}s</button></p>
@@ -39,17 +39,6 @@
           <button v-on:click="selectDog">Select Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
-    <div v-if="likelist.length>0" class = "liked">
-      <p style="text-align:center;">My Favorite Dogs:</p>
-      <transition-group name="slideRight" tag="div" appear>
-      <ul v-for="item in likelist" class="likeHistory" v-bind:key="likelist.indexOf(item)">
-        <li class="likeHistoryelement">
-          <a v-bind:href="item.link" target="_blank"> <img v-bind:src="item.link" class="thumbnail">{{item.dog}} </a>
-          <span v-if="item.comment">"{{item.comment}}"</span><button v-on:click="removeWord(item)" class="remove-word">[remove dog] </button>
-        </li>
-      </ul>
-        </transition-group>
-    </div>
     <div v-if="companion.length>0" class = "liked">
       <p style="text-align:center;">My Canine Companion:</p>
       <transition-group name="slideRight" tag="div" appear>
@@ -84,7 +73,7 @@ export default {
       errors: [],
       phrase: '',
       rhyme: '',
-      posts: null,
+      posts: {},
       dogSelection: null,
       dogUrls:'',
       dogPic:'',
