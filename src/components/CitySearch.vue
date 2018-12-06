@@ -39,7 +39,7 @@
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
     <form v-on:submit.prevent="getCities">
-        <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button></p>
+        <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button><span v-if="showLoading"> (press again if loading)</span></p>
     </form>
     <p v-if="results && results.list.length>1">There is more than one {{query}} on file, please select a location from the map below:</p>
     <p v-if="results && results.list.length>1 && selectedCity"> you have selected city #{{selectedCityIndex+1}}</p>
