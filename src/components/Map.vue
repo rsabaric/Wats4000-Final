@@ -90,7 +90,7 @@ export default {
       selectionCity:'',
       selectionTemp:0,
       dogMessage: '',
-      mapOptions:{displayMode:'markers',colorAxis: {colors: ['#4374e0','#e7711c']}, backgroundColor: '#81d4fa',datalessRegionColor: '#009900'},
+      mapOptions:{displayMode:'markers',colorAxis: {colors: ['#4374e0','#e7711c']}, backgroundColor: '#81d4fa',datalessRegionColor: '#ccffe6'},
       chartEvents: {
         'select': () => {
           const chartMap = this.$refs.gChart.chartObject;
@@ -278,7 +278,7 @@ li {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #ccffe6;
     cursor: pointer;
     border: solid black;
     border-width: 1px

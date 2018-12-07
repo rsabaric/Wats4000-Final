@@ -41,11 +41,11 @@
           <input type="date" v-model="traveldate">
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
-        <p>Enter city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="New York, NY"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
+        <p>Enter city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
         </form>
     <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
     <p v-if="results && results.count>1 && results.list.length>1">There is more than one {{query}}, choose from the map below by selecting the marker:</p>
-    <p v-if="results && results.list.length>1 && selectedCity"> you have selected city #{{selectedCityIndex+1}}</p>
+    <p v-if="results && results.list.length>1 && selectedCity"> you have selected {{query}} #{{selectedCityIndex+1}}</p>
     <GmapMap v-if="results && results.list.length > 0"
   :center="{lat:40, lng:-100}"
   :zoom="3"
@@ -126,7 +126,7 @@ export default {
       this.username=this.companion[0].dog;
       this.email=`${this.companion[0].dog}@dog.com`;
       this.budget=100;
-      this.traveldate="2019-01-01"
+      this.traveldate="2019-01-01";
     },
     saveCity: function (city) {
       this.favorites.push(city);
