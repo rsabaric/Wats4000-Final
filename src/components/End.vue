@@ -11,7 +11,7 @@
     <router-link to=/Map active class="navitem" exact>Step 3: Your Results</router-link>
    </li>
    <li>
-    <router-link to=/End active class="navitem" exact>Step 3: Your Results</router-link>
+    <router-link to=/End active class="navitem" exact>Step 4: Finished!</router-link>
    </li>
    </ul>
       <iframe src="https://giphy.com/embed/14wXMGbHjXK2k0" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/boy-adventure-14wXMGbHjXK2k0">via GIPHY</a></p>

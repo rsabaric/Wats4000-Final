@@ -19,7 +19,10 @@
     <div v-show="showForm" class="form-container">
       <h1>Enter your information</h1>
       <p v-show="showError" class="error"> Please complete the form  </p>
-      <form v-on:submit.prevent="validateForm">
+      <form>
+        <p>
+          <button v-on:click="AutoInfo">Nah, just fill it in for me please!</button>
+        </p>
         <p><label>Your Name:
           <input type="text" id="username" v-model="username" placeholder="Enter username here.">
         </label></p>
@@ -38,10 +41,10 @@
           <input type="date" v-model="traveldate">
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
-    <form v-on:submit.prevent="getCities">
-        <p>Enter city name: <input type="text" v-model="query" placeholder="Paris, TX"> <button type="submit">Go</button><span v-if="showLoading"> (press again if loading)</span></p>
-    </form>
-    <p v-if="results && results.list.length>1">There is more than one {{query}} on file, please select a location from the map below:</p>
+        <p>Enter city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="New York, NY"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
+        </form>
+    <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
+    <p v-if="results && results.count>1 && results.list.length>1">There is more than one {{query}}, choose from the map below by selecting the marker:</p>
     <p v-if="results && results.list.length>1 && selectedCity"> you have selected city #{{selectedCityIndex+1}}</p>
     <GmapMap v-if="results && results.list.length > 0"
   :center="{lat:40, lng:-100}"
@@ -67,8 +70,7 @@
     </ul>
     <load-spinner v-if="showLoading"></load-spinner>
         <p class="privacy"><label>I am ready to see my destinations!
-        </label><input type="submit" value="Let's Go"></p>
-      </form>
+        </label><button v-on:click="$router.push('Map')">Let's Go!</button></p>
     </div>
   </div>
 
@@ -82,7 +84,6 @@ import WeatherSummary from '@/components/WeatherSummary';
 import WeatherData from '@/components/WeatherData';
 import CubeSpinner from '@/components/CubeSpinner';
 import MessageContainer from '@/components/MessageContainer';
-import FavoriteCities from '@/components/FavoriteCities';
 
 
 export default {
@@ -91,8 +92,7 @@ export default {
     'weather-summary': WeatherSummary,
     'weather-data': WeatherData,
     'load-spinner': CubeSpinner,
-    'message-container': MessageContainer,
-    'favorite-cities' : FavoriteCities
+    'message-container': MessageContainer
   },
   data () {
     return {
@@ -112,20 +112,22 @@ export default {
       traveldate:0,
       coordinates: {},
       selectedCityIndex:0,
-      selectedCity: {}
+      selectedCity: null
     }
   },
   created () {
-    if (this.$ls.get('favoriteCities')) {
-      this.favorites = this.$ls.get('favoriteCities');
-      this.home = this.$ls.get('homeCity');
-    }
     if (this.$ls.get('selectedDog')) {
       this.companion = this.$ls.get('selectedDog');
     }
 
   },
   methods: {
+    AutoInfo: function () {
+      this.username=this.companion[0].dog;
+      this.email=`${this.companion[0].dog}@dog.com`;
+      this.budget=100;
+      this.traveldate="2019-01-01"
+    },
     saveCity: function (city) {
       this.favorites.push(city);
       this.$ls.set('favoriteCities', this.favorites);
@@ -157,6 +159,10 @@ export default {
           this.results = response.data;
           this.showLoading = false;
           this.$ls.set(cacheLabel, this.results, cacheExpiry);
+          this.coordinates={lat: this.results.list[0].coord.lat, lng:this.results.list[0].coord.lon};
+          if(this.results.list.length=1) {
+          this.selectedCity=this.results.list[0];
+        }
         })
         .catch(error => {
           this.messages.push({
@@ -169,19 +175,11 @@ export default {
          console.log(`valid cache detected for ${cacheLabel}`);
          this.results = this.$ls.get(cacheLabel);
          this.showLoading = false;       
-
       }
-        this.coordinates={lat: this.results.list[0].coord.lat, lng:this.results.list[0].coord.lon};
-        if(this.results.list.length=1) {
-          this.selectedCity=this.results.list[0];
-        } else {
-          this.selectedCity=null;
-        }
     },
     validateForm: function () {
       if((this.username !='') && (this.email !='') && (this.traveldate!=0) && (this.selectedCity)){
         console.log('form is valid');
-        this.$router.push('Map')
         //this.showForm = false;;
         //console.log(this.username);
       } else {
@@ -211,7 +209,6 @@ a {
   color: #42b983;
 }
 .home{
-  display: inline-block;
   width: 800px;
   min-height: 100px;
   border: solid 1px #e8e8e8;

@@ -23,9 +23,10 @@
     <!--<button v-on:click="seeHistory">See Historical Weather for:</button>
     <input type="date" v-model="historyDate">-->
     <label for="monthRange">Select Month for Historical Weather:</label>
-    <input type="range" v-on:click="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
+    <input type="range" v-on:change="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
     <label for="monthRange">{{intMonth[historyMonth]}}</label>
-    <GChart class = "googlechart"
+    <div class= "googlechart">
+    <GChart
       type="GeoChart"
       :settings="{ packages: ['geochart'], mapsApiKey:'AIzaSyA63PM8wLyUAsL6AT3MVuxUszbVQ_KBJUE'}"
       :data="mapData"
@@ -33,6 +34,7 @@
       :events="chartEvents"
       ref="gChart"
     />
+    </div>
     <div v-if="selectionTemp">
     <p>Your Current Selection: {{selectionCity}}</p>
     <p v-if="selectionTemp<40">Brrrr, it's only It's {{selectionTemp}} degrees in {{selectionCity}}, you better pack that parka!</p>
@@ -88,7 +90,7 @@ export default {
       selectionCity:'',
       selectionTemp:0,
       dogMessage: '',
-      mapOptions:{displayMode:'markers',colorAxis: {colors: ['#4374e0','#e7711c']}},
+      mapOptions:{displayMode:'markers',colorAxis: {colors: ['#4374e0','#e7711c']}, backgroundColor: '#81d4fa',datalessRegionColor: '#009900'},
       chartEvents: {
         'select': () => {
           const chartMap = this.$refs.gChart.chartObject;
@@ -246,12 +248,13 @@ li {
   text-align: center;
   float: left;     
 }
+
 .googlechart {
-  max-width: 75%;
-  margin:auto;
+  max-width: 50%;
   margin-top: 15px;
   border:solid black;
-  border-width: 1px;
+  border-width: 2px;
+  padding: 20px;
 }
 .slider {
     -webkit-appearance: none;
