@@ -19,7 +19,7 @@
     <div v-show="showForm" class="form-container">
       <h1>Enter your information</h1>
       <p v-show="showError" class="error"> Please complete the form  </p>
-      <form>
+
         <p>
           <button v-on:click="AutoInfo">Nah, just fill it in for me please!</button>
         </p>
@@ -41,11 +41,12 @@
           <input type="date" v-model="traveldate">
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
-        <p>Enter city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
-        </form>
+        <p>Enter your city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
+    <p v-show="showMap">Select the marker on the map below to continue</p>
     <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
     <p v-if="results && results.count>1 && results.list.length>1">There is more than one {{query}}, choose from the map below by selecting the marker:</p>
     <p v-if="results && results.list.length>1 && selectedCity"> you have selected {{query}} #{{selectedCityIndex+1}}</p>
+    <div v-show="showMap">
     <GmapMap v-if="results && results.list.length > 0"
   :center="{lat:40, lng:-100}"
   :zoom="3"
@@ -61,16 +62,17 @@
     @click="clicked({lat: marker.coord.lat, lng:marker.coord.lon}, index)"
   />
 </GmapMap>
+    </div>
     <ul class="cities" v-if="results && selectedCity && results.list.length  > 0">
       <li>
-        <h2>{{ selectedCity.name }}, {{ selectedCity.sys.country }}</h2>
+        <h2>{{ selectedCity.name }}</h2>
         <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
         <weather-data v-bind:weatherData="selectedCity.main"></weather-data>
       </li>
     </ul>
     <load-spinner v-if="showLoading"></load-spinner>
-        <p class="privacy"><label>I am ready to see my destinations!
-        </label><button v-on:click="$router.push('Map')">Let's Go!</button></p>
+        <p class="privacy" v-show="selectedCity"><label>I am ready to see my destinations!
+        </label><button v-on:click="finished">Let's Go!</button></p>
     </div>
   </div>
 
@@ -112,7 +114,8 @@ export default {
       traveldate:0,
       coordinates: {},
       selectedCityIndex:0,
-      selectedCity: null
+      selectedCity: null,
+      showMap: false
     }
   },
   created () {
@@ -145,7 +148,7 @@ export default {
     getCities: function () {
       this.results = null;
       this.showLoading = true;
-
+      this.showMap = true;
       let cacheLabel = `citySearch_${this.query}`;
       let cacheExpiry = 15*60*1000;
       if(!this.$ls.get(cacheLabel)){
@@ -191,6 +194,12 @@ export default {
       this.selectedCityIndex=cityiden;
       this.selectedCity = this.results.list[cityiden];
       console.log(this.selectedCity);
+      this.showMap = false;
+    },
+    finished: function () {
+      this.$ls.set('travelDate', this.traveldate);
+      this.$ls.set('travelBudget', this.budget);
+      this.$router.push('Map');
     }
   }
 }

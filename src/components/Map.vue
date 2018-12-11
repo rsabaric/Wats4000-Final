@@ -17,35 +17,43 @@
      <img v-bind:src="companion[0].link" class="thumbnail"></img>
      <p>Woof Woof!  This page provides a map to help you choose a destination</p>
      <p>We have the current weather for several popular cities, as well as historical averages for each month.</p>
-     <p>Use the button and slider below to change the info on the map, then choose a destination by clicking a city.</p>
-    <div id="app">
-    <button v-on:click="refresh">Get Current Temperatures</button>
-    <!--<button v-on:click="seeHistory">See Historical Weather for:</button>
-    <input type="date" v-model="historyDate">-->
-    <label for="monthRange">Select Month for Historical Weather:</label>
-    <input type="range" v-on:change="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
-    <label for="monthRange">{{intMonth[historyMonth]}}</label>
-    <div class= "googlechart">
-    <GChart
-      type="GeoChart"
-      :settings="{ packages: ['geochart'], mapsApiKey:'AIzaSyA63PM8wLyUAsL6AT3MVuxUszbVQ_KBJUE'}"
-      :data="mapData"
-      :options="mapOptions"
-      :events="chartEvents"
-      ref="gChart"
-    />
-    </div>
-    <div v-if="selectionTemp">
-    <p>Your Current Selection: {{selectionCity}}</p>
-    <p v-if="selectionTemp<40">Brrrr, it's only It's {{selectionTemp}} degrees in {{selectionCity}}, you better pack that parka!</p>
-    <p v-else-if="selectionTemp<60">It's {{selectionTemp}} degrees in {{selectionCity}}, you might want to pack a sweater!</p>
-    <p v-else-if="selectionTemp<80">It's {{selectionTemp}} degrees in {{selectionCity}}, that sounds nice! Pack for pleasant weather.</p>
-    <p v-else-if="selectionTemp<100">It's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and flip-flops!</p>
-    <p v-else>Yikes, it's {{selectionTemp}} degrees in {{selectionCity}}, pack some shorts and drink plenty of water!</p>
-    <button v-on:click="final">Alright, take me to {{selectionCity}}</button>
-    </div>
-  </div>
-  
+     <div v-show="showMap">
+        <p>Use the button and slider below to change the info on the map, then choose a destination by clicking a city.</p>
+        <button v-on:click="refresh">Get Current Temperatures</button>
+        <!--<button v-on:click="seeHistory">See Historical Weather for:</button>
+        <input type="date" v-model="historyDate">-->
+        <label for="monthRange">Select Month for Historical Weather:</label>
+        <input type="range" v-on:change="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
+        <label for="monthRange">{{intMonth[historyMonth]}}</label>
+     </div>
+      <div class= "googlechart" v-show="showMap">
+        <GChart
+          type="GeoChart"
+          :settings="{ packages: ['geochart'], mapsApiKey:'AIzaSyA63PM8wLyUAsL6AT3MVuxUszbVQ_KBJUE'}"
+          :data="mapData"
+          :options="mapOptions"
+          :events="chartEvents"
+          ref="gChart"
+        />
+      </div>
+      <div v-if="!showMap" class = "cityInfo">
+        <p>Your Current Selection: {{selectionCity}}</p>
+          <GChart
+          :settings="{packages: ['line']}" 
+          :data="lineData"
+          :options="lineOptions"
+          :createChart="(el, google) => new google.charts.Line(el)"
+          @ready="onChartReady"
+          />
+        <p>Your selected travel date is {{travelDate}}</p>
+        <p v-if="selectionTemp<40">Brrrr, the average high temperature is only {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, you better pack that parka!</p>
+        <p v-else-if="selectionTemp<60">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, you might want to pack a sweater!</p>
+        <p v-else-if="selectionTemp<80">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, that sounds nice! Pack for pleasant weather.</p>
+        <p v-else-if="selectionTemp<100">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and flip-flops!</p>
+        <p v-else>Yikes, The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and drink plenty of water!</p>
+        <button v-on:click="final">Alright, take me to {{selectionCity}}</button>
+        <button v-on:click="showMap=true">Let's See the Map Again</button>
+      </div>
   </div>
 </template>
 
@@ -58,7 +66,7 @@ import {API} from '@/common/api';
 import {Seattle} from '@/assets/Seattle';
 import {Aukland} from '@/assets/Aukland';
 import {Cabo} from '@/assets/Cabo';
-import {CostaRica} from '@/assets/CostaRica';
+import {SanJose} from '@/assets/SanJose';
 import {Cozumel} from '@/assets/Cozumel';
 import {Honolulu} from '@/assets/Honolulu';
 import {Madrid} from '@/assets/Madrid';
@@ -75,6 +83,14 @@ export default {
   },
   data () {
     return {
+      budget: 0,
+      travelDate: null,
+      travelMonth: null,
+      travelMonthStr: null,
+      cityHistoryData: {'Aukland':Aukland, 'Cabo':Cabo, 'Cozumel':Cozumel, 'Honolulu':Honolulu, 'Madrid':Madrid, 'New York':NewYork, 'San Jose':SanJose, 'Seattle':Seattle, 'Spokane':Spokane, 'Tokyo':Tokyo, 'Venice': Venice},
+      selectionCityFile: 'Seattle',
+      chartsLib: null,
+      showMap: true,
       historyMonth: 0,
       intMonth: {0:'January', 1:'February', 2:'March', 3:'April', 4:'May', 5:'June', 6:'July', 7:'August', 8:'September', 9:'October', 10:'November', 11:'December'},
       historyDate: null,
@@ -84,6 +100,7 @@ export default {
       messages: [],
       companion:[],
       woof:'dfdf',
+      lineData: [],
       mapData:[
         ['City',   'Max Temperature', 'Precipitation'],
         ['Spokane, WA', 0,0]],
@@ -96,13 +113,73 @@ export default {
           const chartMap = this.$refs.gChart.chartObject;
           const selection = chartMap.getSelection();
           this.selectionCity = this.mapData[(selection[0].row+1)][0];
-          this.selectionTemp = this.mapData[(selection[0].row+1)][1].toString();
+          //this.selectionTemp = this.mapData[(selection[0].row+1)][1].toString();
+          this.showMap = false;
+          this.selectionCityFile=this.selectionCity.split(",")[0];
+          console.log(this.selectionCityFile);
+          console.log(this.cityHistoryData[this.selectionCityFile].NAME);
+/*           this.lineData= [
+            ['Month',   'Max Temperature', 'Precipitation'],
+            [0,      this.cityHistoryData[this.selectionCityFile][0]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][0]['Precipitation']],
+            [1,     this.cityHistoryData[this.selectionCityFile][1]['Average High Temp.'],    this.cityHistoryData[this.selectionCityFile][1]['Precipitation']],
+            [2,    this.cityHistoryData[this.selectionCityFile][2]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][2]['Precipitation']],
+            [3,    this.cityHistoryData[this.selectionCityFile][3]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][3]['Precipitation']],
+            [4,   this.cityHistoryData[this.selectionCityFile][4]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][4]['Precipitation']],
+            [5,     this.cityHistoryData[this.selectionCityFile][5]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][5]['Precipitation']],
+            [6,   this.cityHistoryData[this.selectionCityFile][6]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][6]['Precipitation']],
+            [7,   this.cityHistoryData[this.selectionCityFile][7]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][7]['Precipitation']],
+            [8,  this.cityHistoryData[this.selectionCityFile][8]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][8]['Precipitation']],
+            [9,      this.cityHistoryData[this.selectionCityFile][9]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][9]['Precipitation']],
+            [10,   this.cityHistoryData[this.selectionCityFile][10]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][10]['Precipitation']],
+            [11,   this.cityHistoryData[this.selectionCityFile][11]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][11]['Precipitation']]
+          ];  */
+          this.lineData= [
+            ['Month',   'Max Temperature', 'Precipitation'],
+            ['January',      this.cityHistoryData[this.selectionCityFile][0]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][0]['Precipitation']],
+            ['February',     this.cityHistoryData[this.selectionCityFile][1]['Average High Temp.'],    this.cityHistoryData[this.selectionCityFile][1]['Precipitation']],
+            ['March',    this.cityHistoryData[this.selectionCityFile][2]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][2]['Precipitation']],
+            ['April',    this.cityHistoryData[this.selectionCityFile][3]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][3]['Precipitation']],
+            ['May',   this.cityHistoryData[this.selectionCityFile][4]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][4]['Precipitation']],
+            ['June',     this.cityHistoryData[this.selectionCityFile][5]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][5]['Precipitation']],
+            ['July',   this.cityHistoryData[this.selectionCityFile][6]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][6]['Precipitation']],
+            ['August',   this.cityHistoryData[this.selectionCityFile][7]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][7]['Precipitation']],
+            ['September',  this.cityHistoryData[this.selectionCityFile][8]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][8]['Precipitation']],
+            ['October',      this.cityHistoryData[this.selectionCityFile][9]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][9]['Precipitation']],
+            ['November',   this.cityHistoryData[this.selectionCityFile][10]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][10]['Precipitation']],
+            ['December',   this.cityHistoryData[this.selectionCityFile][11]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][11]['Precipitation']]
+            ];
+            this.selectionTemp = this.cityHistoryData[this.selectionCityFile][this.travelMonth]['Average High Temp.'];
+            this.travelMonthStr = this.intMonth[this.travelMonth]
         }
       }
       
     }
   },
+  computed: {
+    lineOptions ()  {
+      if (!this.chartsLib) return null
+      return this.chartsLib.charts.Line.convertOptions({
+        chart: {
+          title: 'Historical Weather Averages'
+        },
+        series: {
+          0: {axis: 'Temp'},
+          1: {axis: 'Precip'}
+          },
+          axes: {
+          y: {
+            Temp: {label: 'high temp'},
+            Precip: {label: 'precip'}
+          }  
+          }
+
+      })
+    }
+  },
   methods: {
+    onChartReady (chart, google) {
+      this.chartsLib = google
+    },
       final: function () {
       this.$router.push('End');
       },
@@ -145,7 +222,7 @@ export default {
         ['City',   'Max Temperature', 'Precipitation'],
         ['Seattle, WA',      Seattle[month]['Average High Temp.'],    Seattle[month]['Precipitation']],
         ['Honolulu, HI',     Honolulu[month]['Average High Temp.'],    Honolulu[month]['Precipitation']],
-        ['San Jose, Costa Rica',    CostaRica[month]['Average High Temp.'],    CostaRica[month]['Precipitation']],
+        ['San Jose, Costa Rica',    SanJose[month]['Average High Temp.'],    SanJose[month]['Precipitation']],
         ['Venice, Italy',     Venice[month]['Average High Temp.'],    Venice[month]['Precipitation']],
         ['Cozumel, Mexico',   Cozumel[month]['Average High Temp.'],    Cozumel[month]['Precipitation']],
         ['Cabo San Lucas, Mexico',     Cabo[month]['Average High Temp.'],    Cabo[month]['Precipitation']],
@@ -155,11 +232,14 @@ export default {
         ['Tokyo, Japan',     Tokyo[month]['Average High Temp.'],    Tokyo[month]['Precipitation']],
         ['Madrid, Spain',  Madrid[month]['Average High Temp.'],    Madrid[month]['Precipitation']]
       ];
-      console.log('see historic data');
-      console.log(Seattle[month]['Average High Temp.']);
+
       }
 },
 created () {
+      this.travelDate = this.$ls.get('travelDate');
+      this.travelMonth = this.travelDate.split("-")[1];
+      this.travelMonth = parseInt(this.travelMonth)-1;
+      this.budget = this.$ls.get('travelBudget');
       this.testName = Seattle[0]['Average High Temp.'];
       this.companion = this.$ls.get('selectedDog');
       this.results = null;
@@ -190,20 +270,21 @@ created () {
          this.results = this.$ls.get(cacheLabel);
          this.showLoading = false;       
     }
-        this.mapData= [
-        ['City',   'Current Temperature', 'Wind Speed'],
-        ['Seattle, WA',      this.results.list[0].main.temp,    this.results.list[0].wind.speed],
-        ['Honolulu, HI',     this.results.list[1].main.temp,    this.results.list[1].wind.speed],
-        ['San Jose, Costa Rica',    this.results.list[2].main.temp,    this.results.list[2].wind.speed],
-        ['Venice, Italy',     this.results.list[3].main.temp,    this.results.list[3].wind.speed],
-        ['Cozumel, Mexico',   this.results.list[4].main.temp,    this.results.list[4].wind.speed],
-        ['Cabo San Lucas, Mexico',     this.results.list[5].main.temp,    this.results.list[5].wind.speed],
-        ['Aukland, New Zealand',   this.results.list[6].main.temp,    this.results.list[6].wind.speed],
-        ['New York, NY',  this.results.list[7].main.temp,    this.results.list[7].wind.speed],
-        ['Spokane, WA', this.results.list[8].main.temp,    this.results.list[8].wind.speed],
-        ['Tokyo, Japan',     this.results.list[9].main.temp,    this.results.list[9].wind.speed],
-        ['Madrid, Spain',  this.results.list[10].main.temp,    this.results.list[10].wind.speed]
-      ]
+        this.lineData= [
+        ['Month',   'Max Temperature', 'Precipitation'],
+        [0,      Seattle[0]['Average High Temp.'],     Seattle[0]['Precipitation']],
+        [1,     Seattle[1]['Average High Temp.'],    Seattle[1]['Precipitation']],
+        [2,    Seattle[2]['Average High Temp.'],     Seattle[2]['Precipitation']],
+        [3,    Seattle[3]['Average High Temp.'],     Seattle[3]['Precipitation']],
+        [4,   Seattle[4]['Average High Temp.'],     Seattle[4]['Precipitation']],
+        [5,     Seattle[5]['Average High Temp.'],     Seattle[5]['Precipitation']],
+        [6,   Seattle[6]['Average High Temp.'],     Seattle[6]['Precipitation']],
+        [7,   Seattle[7]['Average High Temp.'],     Seattle[7]['Precipitation']],
+        [8,  Seattle[8]['Average High Temp.'],     Seattle[8]['Precipitation']],
+        [9,      Seattle[9]['Average High Temp.'],     Seattle[9]['Precipitation']],
+        [10,   Seattle[10]['Average High Temp.'],     Seattle[10]['Precipitation']],
+        [11,   Seattle[11]['Average High Temp.'],     Seattle[11]['Precipitation']]
+      ];
   }
 }
 </script>
@@ -255,6 +336,12 @@ li {
   border:solid black;
   border-width: 2px;
   padding: 20px;
+}
+.cityInfo{
+  border: solid black;
+  border-width: 2px;
+  padding: 20px;
+  margin-top: 15px;
 }
 .slider {
     -webkit-appearance: none;

@@ -1,4 +1,4 @@
-export var CostaRica = [
+export var SanJose = [
   {
     "NAME": "San Jose, Costa Rica",
     "DATE": "January",
