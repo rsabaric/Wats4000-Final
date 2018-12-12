@@ -26,5 +26,6 @@ export default {
 .weatherSummary {
   display: inline-block;
   width: 100px;
+  float: left;
 }
 </style>

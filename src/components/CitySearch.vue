@@ -42,28 +42,29 @@
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
         <p>Enter your city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
-    <p v-show="showMap">Select the marker on the map below to continue</p>
-    <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
-    <p v-if="results && results.count>1 && results.list.length>1">There is more than one {{query}}, choose from the map below by selecting the marker:</p>
-    <p v-if="results && results.list.length>1 && selectedCity"> you have selected {{query}} #{{selectedCityIndex+1}}</p>
-    <div v-show="showMap">
-    <GmapMap v-if="results && results.list.length > 0"
-  :center="{lat:40, lng:-100}"
-  :zoom="3"
-  map-type-id="terrain"
-  style="width: 500px; height: 300px"
->
-  <GmapMarker v-for="(marker, index) in results.list"
-    :key="index"
-    :position="{lat: marker.coord.lat, lng:marker.coord.lon}"
-    :clickable="true"
-    :draggable="true"
-    :label="(index+1).toString()"
-    @click="clicked({lat: marker.coord.lat, lng:marker.coord.lon}, index)"
-  />
-</GmapMap>
-    </div>
-    <ul class="cities" v-if="results && selectedCity && results.list.length  > 0">
+        <div v-show="showMap"> 
+          <p>Select the marker on the map below to continue</p>
+          <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
+          <p v-if="results && results.count>1 && results.list.length>1">There is more than one {{query}}, choose from the map below by selecting the marker:</p>
+          <p v-if="results && results.list.length>1 && selectedCity"> you have selected {{query}} #{{selectedCityIndex+1}}</p>
+        <GmapMap v-if="results && results.list.length > 0"
+        :center="{lat:40, lng:-100}"
+        :zoom="3"
+        map-type-id="terrain"
+        style="width: 500px; height: 300px"
+         >
+        <GmapMarker v-for="(marker, index) in results.list"
+          :key="index"
+          :position="{lat: marker.coord.lat, lng:marker.coord.lon}"
+          :clickable="true"
+          :draggable="true"
+          :label="(index+1).toString()"
+          @click="clicked({lat: marker.coord.lat, lng:marker.coord.lon}, index)"
+        />
+        </GmapMap>
+        </div>
+        <div v-if="results && selectedCity && results.list.length  > 0">
+    <ul class="cities">
       <li>
         <h2>{{ selectedCity.name }}</h2>
         <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
@@ -71,10 +72,10 @@
       </li>
     </ul>
     <load-spinner v-if="showLoading"></load-spinner>
-        <p class="privacy" v-show="selectedCity"><label>I am ready to see my destinations!
-        </label><button v-on:click="finished">Let's Go!</button></p>
+    <label>I'm ready to see my destinations! </label><button v-on:click="finished" class ="boneButton">Let's Go <i class="fas fa-bone fa-spin"></i></button>
+        </div>
     </div>
-  </div>
+  </div>  
 
 
   </div>
@@ -163,9 +164,6 @@ export default {
           this.showLoading = false;
           this.$ls.set(cacheLabel, this.results, cacheExpiry);
           this.coordinates={lat: this.results.list[0].coord.lat, lng:this.results.list[0].coord.lon};
-          if(this.results.list.length=1) {
-          this.selectedCity=this.results.list[0];
-        }
         })
         .catch(error => {
           this.messages.push({
@@ -271,6 +269,16 @@ li {
   color: rgba(48, 48, 48, 0.986);
   text-align: center;
   float: left;     
+}
+.boneButton{
+  background: #333;
+  padding: 0.5rem;
+  font-weight: 300;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  border-radius: 0;
 }
 </style>
 

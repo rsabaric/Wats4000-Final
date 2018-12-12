@@ -51,7 +51,7 @@
         <p v-else-if="selectionTemp<80">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, that sounds nice! Pack for pleasant weather.</p>
         <p v-else-if="selectionTemp<100">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and flip-flops!</p>
         <p v-else>Yikes, The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and drink plenty of water!</p>
-        <button v-on:click="final">Alright, take me to {{selectionCity}}</button>
+        <button v-on:click="final" class = "boneButton">Alright, take me to {{selectionCity}} <i class="fas fa-bone fa-spin"></i></button>
         <button v-on:click="showMap=true">Let's See the Map Again</button>
       </div>
   </div>
@@ -101,9 +101,23 @@ export default {
       companion:[],
       woof:'dfdf',
       lineData: [],
-      mapData:[
+      //mapData:[
+       // ['City',   'Max Temperature', 'Precipitation'],
+       // ['Spokane, WA', 0,0]],
+       mapData:[
         ['City',   'Max Temperature', 'Precipitation'],
-        ['Spokane, WA', 0,0]],
+        ['Seattle, WA',      Seattle[0]['Average High Temp.'],    Seattle[0]['Precipitation']],
+        ['Honolulu, HI',     Honolulu[0]['Average High Temp.'],    Honolulu[0]['Precipitation']],
+        ['San Jose, Costa Rica',    SanJose[0]['Average High Temp.'],    SanJose[0]['Precipitation']],
+        ['Venice, Italy',     Venice[0]['Average High Temp.'],    Venice[0]['Precipitation']],
+        ['Cozumel, Mexico',   Cozumel[0]['Average High Temp.'],    Cozumel[0]['Precipitation']],
+        ['Cabo San Lucas, Mexico',     Cabo[0]['Average High Temp.'],    Cabo[0]['Precipitation']],
+        ['Aukland, New Zealand',   Aukland[0]['Average High Temp.'],    Aukland[0]['Precipitation']],
+        ['New York, NY',  NewYork[0]['Average High Temp.'],    NewYork[0]['Precipitation']],
+        ['Spokane, WA', Spokane[0]['Average High Temp.'],    Spokane[0]['Precipitation']],
+        ['Tokyo, Japan',     Tokyo[0]['Average High Temp.'],    Tokyo[0]['Precipitation']],
+        ['Madrid, Spain',  Madrid[0]['Average High Temp.'],    Madrid[0]['Precipitation']]
+      ],
       selectionCity:'',
       selectionTemp:0,
       dogMessage: '',
@@ -377,5 +391,15 @@ li {
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
+}
+.boneButton{
+  background: #333;
+  padding: 0.5rem;
+  font-weight: 300;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  border-radius: 0;
 }
 </style>

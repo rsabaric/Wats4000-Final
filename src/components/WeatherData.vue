@@ -29,6 +29,7 @@ export default {
 dl {
   padding: 5px;
   background: #e8e8e8;
+  display: inline-block;
 }
 dt {
   float: left;
