@@ -36,7 +36,7 @@
       <img v-bind:src="dogPic" class="dogImg" v-on:click="getDog" v-bind:key="dogPic">
       </transition-group>
         <ul class = "likebar">          
-          <button v-on:click="selectDog">Select Dog <i class="fas fa-bone fa-spin"></i></button>
+          <button v-on:click="selectDog" class = "gobutton">Select Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
     <div v-if="companion.length>0" class = "liked">
@@ -229,6 +229,16 @@ a {
 }
 button{
   background: #333;
+  padding: 0.5rem;
+  font-weight: 300;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  border-radius: 0;
+}
+.gobutton{
+  background: rgb(18, 131, 52);
   padding: 0.5rem;
   font-weight: 300;
   color: #fff;

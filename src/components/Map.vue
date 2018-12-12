@@ -51,6 +51,9 @@
         <p v-else-if="selectionTemp<80">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, that sounds nice! Pack for pleasant weather.</p>
         <p v-else-if="selectionTemp<100">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and flip-flops!</p>
         <p v-else>Yikes, The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and drink plenty of water!</p>
+        <p v-if="budget==='100'">${{budget}} is not very much money to get to {{selectionCity}} from {{cityName}}.  Sign up for a the PuppyCard Elite Credit Card now!</p>
+        <p v-else-if="budget==='1000'">${{budget}} might be enough to get to {{selectionCity}} from {{cityName}}.  If you can sniff out a bit more $$ you might be a little more comfortable!</p>
+        <p v-else-if="budget==='10000'">${{budget}} is definately enough to get to {{selectionCity}} from {{cityName}}.  You and your pup can travel in style!</p>
         <button v-on:click="final" class = "boneButton">Alright, take me to {{selectionCity}} <i class="fas fa-bone fa-spin"></i></button>
         <button v-on:click="showMap=true">Let's See the Map Again</button>
       </div>
@@ -83,7 +86,8 @@ export default {
   },
   data () {
     return {
-      budget: 0,
+      cityName: null,
+      budget: null,
       travelDate: null,
       travelMonth: null,
       travelMonthStr: null,
@@ -250,6 +254,7 @@ export default {
       }
 },
 created () {
+      this.cityName = this.$ls.get('cityName');
       this.travelDate = this.$ls.get('travelDate');
       this.travelMonth = this.travelDate.split("-")[1];
       this.travelMonth = parseInt(this.travelMonth)-1;
@@ -393,7 +398,7 @@ li {
     cursor: pointer;
 }
 .boneButton{
-  background: #333;
+  background: rgb(18, 131, 52);
   padding: 0.5rem;
   font-weight: 300;
   color: #fff;

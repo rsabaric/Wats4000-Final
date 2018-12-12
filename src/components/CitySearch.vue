@@ -31,17 +31,17 @@
         </label></p>
         <p><label>What is your travel budget?:
           <input type="radio" id="$100" value="100"  v-model="budget">
-          <label for="$100">$1-$100</label>
+          <label for="$100">Up to $100</label>
           <input type="radio" id="$1000" value="1000"  v-model="budget">
-          <label for="$1000">$101-$1000</label>
+          <label for="$1000">Up to $1,000</label>
           <input type="radio" id="$10000" value="10000"  v-model="budget">
-          <label for="$10000">$1001-$10000</label>
+          <label for="$10000">Up to $10,000</label>
         </label></p>
         <p><label>When do you want to travel?
           <input type="date" v-model="traveldate">
         </label></p>
         <message-container v-bind:messages="messages"></message-container>
-        <p>Enter your city name: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
+        <p>Enter your current city: <input type="text" v-on:change="getCities" v-model="query" placeholder="Enter Your City"> <button v-on:click="getCities">Go</button><span v-if="showLoading"> (press again if long loading)</span></p>
         <div v-show="showMap"> 
           <p>Select the marker on the map below to continue</p>
           <p v-if="results && results.count>1 && results.list.length==1">There is more than one {{query}} <button v-on:click="getCities">See More {{query}}'s</button></p>
@@ -63,16 +63,21 @@
         />
         </GmapMap>
         </div>
-        <div v-if="results && selectedCity && results.list.length  > 0">
-    <ul class="cities">
-      <li>
-        <h2>{{ selectedCity.name }}</h2>
-        <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
-        <weather-data v-bind:weatherData="selectedCity.main"></weather-data>
-      </li>
-    </ul>
-    <load-spinner v-if="showLoading"></load-spinner>
-    <label>I'm ready to see my destinations! </label><button v-on:click="finished" class ="boneButton">Let's Go <i class="fas fa-bone fa-spin"></i></button>
+        <div v-if="results && selectedCity && results.list.length && !showMap> 0">
+        <ul class="cities">
+          <li>
+            <h2>{{ selectedCity.name }}</h2>
+            <weather-summary v-bind:weatherData="selectedCity.weather"></weather-summary>
+            <weather-data v-bind:weatherData="selectedCity.main"></weather-data>
+          </li>
+        </ul>
+        <load-spinner v-if="showLoading"></load-spinner>
+        <div v-show="budget && traveldate">
+        <label>I'm ready to see my destinations! </label><button v-on:click="finished" class ="boneButton">Let's Go <i class="fas fa-bone fa-spin"></i></button>
+        </div>
+        <div v-show="!(budget && traveldate)">
+        <p> Make sure to fill out the form to see your travel destinations! <button v-on:click="AutoInfo">Nah, just fill it in for me please!</button></p>
+        </div>
         </div>
     </div>
   </div>  
@@ -99,6 +104,7 @@ export default {
   },
   data () {
     return {
+      cityName: null,
       results: null,
       query: '',
       showLoading: false,
@@ -111,8 +117,8 @@ export default {
       showError: false,
       checked: false,
       companion:[],
-      budget:0,
-      traveldate:0,
+      budget: null,
+      traveldate: null,
       coordinates: {},
       selectedCityIndex:0,
       selectedCity: null,
@@ -191,12 +197,14 @@ export default {
     clicked: function (locate, cityiden) {
       this.selectedCityIndex=cityiden;
       this.selectedCity = this.results.list[cityiden];
+      this.cityName = this.selectedCity.name;
       console.log(this.selectedCity);
       this.showMap = false;
     },
     finished: function () {
       this.$ls.set('travelDate', this.traveldate);
       this.$ls.set('travelBudget', this.budget);
+      this.$ls.set('cityName', this.cityName);
       this.$router.push('Map');
     }
   }
@@ -271,7 +279,7 @@ li {
   float: left;     
 }
 .boneButton{
-  background: #333;
+  background: rgb(18, 131, 52);
   padding: 0.5rem;
   font-weight: 300;
   color: #fff;
