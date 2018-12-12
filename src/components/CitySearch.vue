@@ -135,7 +135,7 @@ export default {
     AutoInfo: function () {
       this.username=this.companion[0].dog;
       this.email=`${this.companion[0].dog}@dog.com`;
-      this.budget=100;
+      this.budget="100";
       this.traveldate="2019-01-01";
     },
     saveCity: function (city) {
