@@ -15,7 +15,7 @@
    </li>
    </ul>
      <img v-bind:src="companion[0].link" class="thumbnail"></img>
-     <p>Woof Woof!  This page provides a map to help you choose a destination</p>
+     <p>Woof Woof!  This page provides a map to help you choose a destination.</p>
      <p>We have the current weather for several popular cities, as well as historical averages for each month.</p>
      <div v-show="showMap">
         <p>Use the button and slider below to change the info on the map, then choose a destination by clicking a city.</p>
@@ -51,7 +51,7 @@
         <p v-else-if="selectionTemp<80">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, that sounds nice! Pack for pleasant weather.</p>
         <p v-else-if="selectionTemp<100">The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and flip-flops!</p>
         <p v-else>Yikes, The average high temperature is {{selectionTemp}} degrees in {{selectionCity}} during {{travelMonthStr}}, pack some shorts and drink plenty of water!</p>
-        <p v-if="budget==='100'">${{budget}} is not very much money to get to {{selectionCity}} from {{cityName}}.  Sign up for a the PuppyCard Elite Credit Card now!</p>
+        <p v-if="budget==='100'">${{budget}} is not very much money to get to {{selectionCity}} from {{cityName}}.  Sign up for the PuppyCard Elite Credit Card now!</p>
         <p v-else-if="budget==='1000'">${{budget}} might be enough to get to {{selectionCity}} from {{cityName}}.  If you can sniff out a bit more $$ you might be a little more comfortable!</p>
         <p v-else-if="budget==='10000'">${{budget}} is definately enough to get to {{selectionCity}} from {{cityName}}.  You and your pup can travel in style!</p>
         <button v-on:click="final" class = "boneButton">Alright, take me to {{selectionCity}} <i class="fas fa-bone fa-spin"></i></button>
