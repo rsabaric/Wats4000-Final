@@ -20,8 +20,6 @@
      <div v-show="showMap">
         <p>Use the button and slider below to change the info on the map, then choose a destination by clicking a city.</p>
         <button v-on:click="refresh">Get Current Temperatures</button>
-        <!--<button v-on:click="seeHistory">See Historical Weather for:</button>
-        <input type="date" v-model="historyDate">-->
         <label for="monthRange">Select Month for Historical Weather:</label>
         <input type="range" v-on:change="seeHistory" v-model="historyMonth" min="0" max="11" value="6" class="slider" id="monthRange">
         <label for="monthRange">{{intMonth[historyMonth]}}</label>
@@ -181,7 +179,7 @@ export default {
       this.$router.push('End');
       },
       refresh: function () {
-        //Tried to loop through mapData w/ current temps from results.  Not working :(
+        //Tried to loop through mapData w/ current temps from results.  Not working so i added them all:(
         //let i = 0;
         //for (i=0; i<this.mapData[1].length;i++){
         //  this.mapData[i+1][1]=this.results.list[i].main.temp
