@@ -89,7 +89,7 @@ export default {
       travelDate: null,
       travelMonth: null,
       travelMonthStr: null,
-      cityHistoryData: {'Aukland':Aukland, 'Cabo':Cabo, 'Cozumel':Cozumel, 'Honolulu':Honolulu, 'Madrid':Madrid, 'New York':NewYork, 'San Jose':SanJose, 'Seattle':Seattle, 'Spokane':Spokane, 'Tokyo':Tokyo, 'Venice': Venice},
+      cityHistoryData: {'Aukland':Aukland, 'Cabo San Lucas':Cabo, 'Cozumel':Cozumel, 'Honolulu':Honolulu, 'Madrid':Madrid, 'New York':NewYork, 'San Jose':SanJose, 'Seattle':Seattle, 'Spokane':Spokane, 'Tokyo':Tokyo, 'Venice': Venice},
       selectionCityFile: 'Seattle',
       chartsLib: null,
       showMap: true,
@@ -366,7 +366,7 @@ li {
     cursor: pointer;
 }
 .boneButton{
-  background: rgb(18, 131, 52);
+  background: rgb(0, 115, 153);
   padding: 0.5rem;
   font-weight: 300;
   color: #fff;

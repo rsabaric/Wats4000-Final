@@ -212,7 +212,7 @@ button{
   border-radius: 0;
 }
 .gobutton{
-  background: rgb(18, 131, 52);
+  background: rgb(0, 115, 153);
   padding: 0.5rem;
   font-weight: 300;
   color: #fff;
