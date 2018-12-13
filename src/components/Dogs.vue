@@ -14,7 +14,7 @@
     Step 4: Finished!
    </li>
    </ul>
-   <h2>Thanks for visiting the Woofing Wanderer!</h2>
+   <h2>Thanks for visiting the Woofing Wanderer! WOOF!!!</h2>
    <h3>We provide travel guidance for you and your pup, so you and your canine companion can have an adventure to remember together.</h3>
    <h4>Please select your canine companion from the following list.  Your companion will guide you through this application.</h4>
     <label for="petChooser">Pick a dog breed for your companion:</label>
