@@ -128,11 +128,8 @@ export default {
           const chartMap = this.$refs.gChart.chartObject;
           const selection = chartMap.getSelection();
           this.selectionCity = this.mapData[(selection[0].row+1)][0];
-          //this.selectionTemp = this.mapData[(selection[0].row+1)][1].toString();
           this.showMap = false;
           this.selectionCityFile=this.selectionCity.split(",")[0];
-          console.log(this.selectionCityFile);
-          console.log(this.cityHistoryData[this.selectionCityFile].NAME);
           this.lineData= [
             ['Month',   'Max Temperature', 'Precipitation'],
             ['January',      this.cityHistoryData[this.selectionCityFile][0]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][0]['Precipitation']],
