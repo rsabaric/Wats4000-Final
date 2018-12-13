@@ -22,5 +22,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader). This project uses [`vue2-animate`](https://github.com/asika32764/vue2-animate) and [SpinKit](http://tobiasahlin.com/spinkit/).
