@@ -17,7 +17,7 @@
    <h2>Thanks for visiting the Woofing Wanderer!</h2>
    <h3>We provide travel guidance for you and your pup, so you and your canine companion can have an adventure to remember together.</h3>
    <h4>Please select your canine companion from the following list.  Your companion will guide you through this application.</h4>
-        <label for="petChooser">Pick a dog breed for your companion:</label>
+    <label for="petChooser">Pick a dog breed for your companion:</label>
     <select v-model="dogSelection" v-on:change="results=null">
       <option disabled value="">Please select one</option>
       <option v-for="(value, key, index) in posts.message" :key="index">{{ key }}</option>
@@ -39,17 +39,6 @@
           <button v-on:click="selectDog" class = "gobutton">Select Dog <i class="fas fa-bone fa-spin"></i></button>
         </ul>
     </ul>
-    <div v-if="companion.length>0" class = "liked">
-      <p style="text-align:center;">My Canine Companion:</p>
-      <transition-group name="slideRight" tag="div" appear>
-      <ul v-for="item in companion" class="likeHistory" v-bind:key="companion.indexOf(item)">
-        <li class="likeHistoryelement">
-          <a v-bind:href="item.link" target="_blank"> <img v-bind:src="item.link" class="thumbnail">{{item.dog}} </a>
-          <span v-if="item.comment">"{{item.comment}}"</span>
-        </li>
-      </ul>
-        </transition-group>
-    </div>
   </div>
 </template>
 
@@ -57,15 +46,11 @@
 
 import axios from 'axios';
 import CubeSpinner from '@/components/CubeSpinner';
-import BoneSpinner from '@/components/DogBoneSpin';
-import BoneRotater from '@/components/DogBoneRotate';
 require('vue2-animate/dist/vue2-animate.min.css');
 
 export default {
   name: 'Dogs',
   components: {
-  bonerotate: BoneRotater,
-  bonespin: BoneSpinner
   },
   data () {
     return {
@@ -78,7 +63,6 @@ export default {
       dogUrls:'',
       dogPic:'',
       photoIndex: 0,
-      likelist:[],
       dogComment:'',
       showSpin:false,
       companion:[]
@@ -96,23 +80,13 @@ methods: {
       this.dogUrls = response.data.message;
       this.photoIndex = Math.floor(Math.random()*this.dogUrls.length);
       this.dogPic = this.dogUrls[this.photoIndex];
-
-
     })
     .catch(error => {
       this.errors.push(error);
     });
   },
-    removeWord: function (word) {
-    this.likelist.splice(this.likelist.indexOf(word), 1);
-    console.log(word);
-      let message = {
-        type: 'success',
-        text: `${word} removed from the word list.`
-      };
-
-  },
     selectDog: function () {
+    //dogComment function removed currently, can be reintroduced with dogComment input. 
     this.companion=([{dog: this.dogSelection,link:this.dogPic, comment:this.dogComment}]); 
     this.$ls.set('selectedDog', this.companion);
     this.dogComment='';
@@ -271,13 +245,6 @@ button.remove-word:hover {
     border-radius: 4px;
     padding: 5px;
     width: 50px;
-}
-.bonespin{
-  margin: 150px;
-}
-.badbonespinners{
-  padding: 20px;
-  margin: 20px;
 }
 .nav {
   background-color:grey;

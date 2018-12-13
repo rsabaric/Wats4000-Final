@@ -105,9 +105,6 @@ export default {
       companion:[],
       woof:'dfdf',
       lineData: [],
-      //mapData:[
-       // ['City',   'Max Temperature', 'Precipitation'],
-       // ['Spokane, WA', 0,0]],
        mapData:[
         ['City',   'Max Temperature', 'Precipitation'],
         ['Seattle, WA',      Seattle[0]['Average High Temp.'],    Seattle[0]['Precipitation']],
@@ -136,21 +133,6 @@ export default {
           this.selectionCityFile=this.selectionCity.split(",")[0];
           console.log(this.selectionCityFile);
           console.log(this.cityHistoryData[this.selectionCityFile].NAME);
-/*           this.lineData= [
-            ['Month',   'Max Temperature', 'Precipitation'],
-            [0,      this.cityHistoryData[this.selectionCityFile][0]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][0]['Precipitation']],
-            [1,     this.cityHistoryData[this.selectionCityFile][1]['Average High Temp.'],    this.cityHistoryData[this.selectionCityFile][1]['Precipitation']],
-            [2,    this.cityHistoryData[this.selectionCityFile][2]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][2]['Precipitation']],
-            [3,    this.cityHistoryData[this.selectionCityFile][3]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][3]['Precipitation']],
-            [4,   this.cityHistoryData[this.selectionCityFile][4]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][4]['Precipitation']],
-            [5,     this.cityHistoryData[this.selectionCityFile][5]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][5]['Precipitation']],
-            [6,   this.cityHistoryData[this.selectionCityFile][6]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][6]['Precipitation']],
-            [7,   this.cityHistoryData[this.selectionCityFile][7]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][7]['Precipitation']],
-            [8,  this.cityHistoryData[this.selectionCityFile][8]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][8]['Precipitation']],
-            [9,      this.cityHistoryData[this.selectionCityFile][9]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][9]['Precipitation']],
-            [10,   this.cityHistoryData[this.selectionCityFile][10]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][10]['Precipitation']],
-            [11,   this.cityHistoryData[this.selectionCityFile][11]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][11]['Precipitation']]
-          ];  */
           this.lineData= [
             ['Month',   'Max Temperature', 'Precipitation'],
             ['January',      this.cityHistoryData[this.selectionCityFile][0]['Average High Temp.'],     this.cityHistoryData[this.selectionCityFile][0]['Precipitation']],
@@ -186,8 +168,8 @@ export default {
           },
           axes: {
           y: {
-            Temp: {label: 'high temp'},
-            Precip: {label: 'precip'}
+            Temp: {label: 'High Temp (F)'},
+            Precip: {label: 'Precip (IN.)'}
           }  
           }
 
@@ -202,7 +184,7 @@ export default {
       this.$router.push('End');
       },
       refresh: function () {
-        //Trying to loop through mapData w/ current temps from results.  Not working, maybe i off by 1 or wrong number type for GeoChart?
+        //Tried to loop through mapData w/ current temps from results.  Not working :(
         //let i = 0;
         //for (i=0; i<this.mapData[1].length;i++){
         //  this.mapData[i+1][1]=this.results.list[i].main.temp
@@ -226,15 +208,6 @@ export default {
       console.log('refresh');
       },
       seeHistory: function () {
-        //Trying to loop through mapData w/ current temps from results.  Not working, maybe i off by 1 or wrong number type for GeoChart?
-        //let i = 0;
-        //for (i=0; i<this.mapData[1].length;i++){
-        //  this.mapData[i+1][1]=this.results.list[i].main.temp
-          //console.log(this.mapData[i+1][i+1])
-          //console.log(this.results.list[i].main.temp);
-        //}
-        //var travelDate = new Date(this.historyDate);
-        //var month = travelDate.getMonth();
         var month = this.historyMonth;
         this.mapData= [
         ['City',   'Max Temperature', 'Precipitation'],
